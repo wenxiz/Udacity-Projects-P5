@@ -1,11 +1,10 @@
-
 // 这是我们的玩家要躲避的敌人 
 var Enemy = function(x, y, speed) {
     // 要应用到每个敌人的实例的变量写在这里
     // 我们已经提供了一个来帮助你实现更多
     this.x = x;
     this.y = y;
-    this.speed = speed || Math.random() * 100;
+    this.speed = speed || Math.random() * 100 +100;
     // 敌人的图片或者雪碧图，用一个我们提供的工具函数来轻松的加载文件
     this.sprite = 'images/enemy-bug.png';
 };
@@ -16,25 +15,15 @@ Enemy.prototype.update = function(dt, x) {
     // 你应该给每一次的移动都乘以 dt 参数，以此来保证游戏在所有的电脑上
     // 都是以同样的速度运行的
     this.x += dt * this.speed
-    this.checkCollision(player)
+    //敌人不断从屏幕左边出现
     if (this.x >= 505) {
-        this.x = -10;
+        this.x = -30;
     }
 };
 
 // 此为游戏必须的函数，用来在屏幕上画出敌人，
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-//碰撞检测
-Enemy.prototype.checkCollision = function (player) {
-    // console.log(`check collision() is working, player: ${player.x}, ${player.y}`)
-    // if (this.y === player.y) {
-    //     console.log(`collision happend!! enemy.x: ${this.x}, enemy.y: ${this.y}, player.x: ${player.x}, player.y: ${player.y}`)
-    // } else {
-    //     console.log(`player's safe!! enemy.x: ${this.x}, player.x: ${player.x}`)
-    // }
 };
 
 // 现在实现你自己的玩家类
@@ -45,13 +34,35 @@ var Player = function(x, y) {
     this.sprite = 'images/char-boy.png';
 };
 
+var count = 0
 Player.prototype.update = function(dt) {
-    if (this.y === -31) {
-        alert("You Win!!");
-        this.x = 202;
-        this.y = 305;
+    if (this.y === -11) {
+        count ++;
+        if (count % 5 === 2) {
+            alert("You Win!!");
+            this.x = 202;
+            this.y = 404;
+        }
     } 
 };
+
+//碰撞检测
+Player.prototype.checkCollisions = function () {
+    for(var i=0;i<allEnemies.length;i++){
+        //首先判断player和enemy是否在同一行（
+        if(this.y === allEnemies[i].y){
+            //再判断两个图形间的距离
+            if((Math.abs(this.x - allEnemies[i].x))<40){
+                this.x =200;
+                this.y =404;
+    // console.log(`checkCollisions() is working: player: ${this.x}, ${this.y}; enemy: ${allEnemies[i].x}, ${allEnemies[i].y}`)
+
+  }
+}
+}
+}
+
+
 
 Player.prototype.handleInput = function(movement) {
     switch(movement) {
@@ -65,11 +76,11 @@ Player.prototype.handleInput = function(movement) {
         break;
         case 'up': 
         if (this.y > 0) {
-            this.y -= 84;}
+            this.y -= 83;}
         break;
         case 'down': 
         if (this.y < 389) {
-            this.y += 84;}
+            this.y += 83;}
         break;
     }
 };
@@ -83,12 +94,13 @@ Player.prototype.render = function() {
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
 // 把玩家对象放进一个叫 player 的变量里面
-var allEnemies = [new Enemy(202, 83 * 2 + 55, 0),
-                  // new Enemy(303, 83 * 2 + 55, 100),
-                  // new Enemy(202, 83 * 1 + 55, 200),
-                  // new Enemy(202, 83 * 1 + 55, 200),
-                  new Enemy(202, 0 + 55, 0)]
-var player = new Player(202, 83 * 2 + 55)
+var allEnemies = [];
+// 加入bugs
+for (var i=0; i<6; i++){
+    var bugs = new Enemy(-30, 83*(i%3)+72);
+    allEnemies.push(bugs);
+};
+var player = new Player(202, 404)
 
 // 这段代码监听游戏玩家的键盘点击事件并且代表将按键的关键数字送到 Play.handleInput()
 // 方法里面。你不需要再更改这段代码了。
