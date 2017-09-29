@@ -1,11 +1,10 @@
-/* Engine.js
+/* 
 * 这个文件提供了游戏循环玩耍的功能（更新敌人和渲染）
  * 在屏幕上画出出事的游戏面板，然后调用玩家和敌人对象的 update / render 函数（在 app.js 中定义的）
  *
  * 一个游戏引擎的工作过程就是不停的绘制整个游戏屏幕，和小时候你们做的 flipbook 有点像。当
  * 玩家在屏幕上移动的时候，看上去就是图片在移动或者被重绘。但这都是表面现象。实际上是整个屏幕
  * 被重绘导致这样的动画产生的假象
-
  * 这个引擎是可以通过 Engine 变量公开访问的，而且它也让 canvas context (ctx) 对象也可以
  * 公开访问，以此使编写app.js的时候更加容易
  */
@@ -24,6 +23,7 @@ var Engine = (function(global) {
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
+
 
     /* 这个函数是整个游戏的主入口，负责适当的调用 update / render 函数 */
     function main() {
@@ -65,9 +65,12 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
-
+    function checkCollisions(){
+        player.checkCollisions();
+    }
+    
     /* 这个函数会遍历在 app.js 定义的存放所有敌人实例的数组，并且调用他们的 update()
      * 函数，然后，它会调用玩家对象的 update 方法，最后这个函数被 update 函数调用。
      * 这些更新函数应该只聚焦于更新和对象相关的数据/属性。把重绘的工作交给 render 函数。
@@ -123,6 +126,7 @@ var Engine = (function(global) {
 
         player.render();
     }
+
 
     /* 这个函数现在没干任何事，但是这会是一个好地方让你来处理游戏重置的逻辑。可能是一个
      * 从新开始游戏的按钮，也可以是一个游戏结束的画面，或者其它类似的设计。它只会被 init()
